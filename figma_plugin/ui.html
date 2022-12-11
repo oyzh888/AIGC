@@ -1,0 +1,38 @@
+<h2>Shape Creator</h2>
+
+<p>Your commands: <input id="command_content" type="text"> </input></p>
+<button id="send_commands">Send</button>
+
+<p style="opacity: 0.01;">Count: <input id="count" type="number" value="5"></p>
+<button id="create">Create</button>
+<button id="cancel">Cancel</button>
+<script>
+
+document.getElementById('create').onclick = () => {
+  const textbox = document.getElementById('count');
+  const count = parseInt(textbox.value, 10);
+  parent.postMessage({ pluginMessage: { type: 'create-shapes', count } }, '*')
+}
+
+document.getElementById('cancel').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
+}
+
+document.getElementById('send_commands').onclick = async () => {
+  const textbox = document.getElementById('command_content');
+  const text_content = textbox.value;
+
+  // fetch('http://127.0.0.1:5000/modify_title/this_is_the_title_content_hahahaha')
+  fetch('http://127.0.0.1:5000/modify_title/' + text_content + 'OYZH')
+  .then((response) => response.text())
+  .then(
+    (data) => {
+      console.log('print data', data)
+      var result_str = data;
+      window.parent.postMessage({ pluginMessage: { type: 'send_commands', result_str } }, '*')
+    }
+  );
+
+}
+
+</script>
