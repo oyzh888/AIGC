@@ -1,7 +1,10 @@
 import json
 from flask import Flask
 # from aimodel import real_get_image
+from flask_cors import CORS
+
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route('/')

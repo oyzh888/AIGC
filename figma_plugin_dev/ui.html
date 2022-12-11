@@ -18,24 +18,47 @@ document.getElementById('cancel').onclick = () => {
   parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
 }
 
-document.getElementById('send_command').onclick = () => {
+document.getElementById('send_commands').onclick = async () => {
   const textbox = document.getElementById('command_content');
   const text_content = textbox.value;
-  parent.postMessage({ pluginMessage: { type: 'create-shapes', text_content } }, '*')
+
+  fetch('http://127.0.0.1:5000/modify_title/this_is_the_title_content_hahahaha')
+  .then((response) => response.text())
+  .then(
+    (data) => {
+      console.log('print data', data)
+      var result_str = data;
+      window.parent.postMessage({ pluginMessage: { type: 'send_commands', result_str } }, '*')
+    }
+  );
+
+
+  // var request = new XMLHttpRequest()
+  // request.open('GET', 'http://127.0.0.1:5000/modify_title/this_is_the_title_content_hahahaha')
+  // request.responseType = 'text'
+  // var result_str = request.response.text;
+  // console.log("request is right:", request)
+  // console.log("request response is wrong (empty):", request.response)
+  // result_str = "Hello Aitist!!!"
+  // request.onload = () => {
+  //   window.parent.postMessage({ pluginMessage: { type: 'send_commands', result_str } }, '*')
+  //   // window.parent.postMessage({type: 'send_commands', pluginMessage: request.response}, '*')
+  // };
+  // request.send()
 }
 
-window.onmessage = async (event) => {
-  if (event.data.pluginMessage.type === 'networkRequest') {
-    var request = new XMLHttpRequest()
-    // This link has random lorem ipsum text
-    request.open('GET', 'https://cors-anywhere.herokuapp.com/http://www.randomtext.me/download/text/lorem/ul-8/5-15')
-    //request.open('GET', 'http://127.0.0.1:5000/modify_title/this_is_the_title_content_hahahaha')
-    request.responseType = 'text'
-    request.onload = () => {
-      window.parent.postMessage({pluginMessage: request.response}, '*')
-    };
-    request.send()
-  }
-}
+// window.onmessage = async (event) => {
+//   if (event.data.pluginMessage.type === 'networkRequest') {
+//     var request = new XMLHttpRequest()
+//     // This link has random lorem ipsum text
+//     // request.open('GET', 'https://cors-anywhere.herokuapp.com/http://www.randomtext.me/download/text/lorem/ul-8/5-15')
+//     request.open('GET', 'http://127.0.0.1:5000/modify_title/this_is_the_title_content_hahahaha')
+//     request.responseType = 'text'
+//     request.onload = () => {
+//       window.parent.postMessage({type: 'send_commands', pluginMessage: request.response}, '*')
+//     };
+//     request.send()
+//   }
+// }
 
 </script>

@@ -2,8 +2,6 @@
 // You can access browser APIs such as the network by creating a UI which contains
 // a full browser environment (see documentation).
 
-
-
 // Runs this code if the plugin is run in Figma
 if (figma.editorType === 'figma') {
   // This plugin will open a window to prompt the user to enter a number, and
@@ -12,28 +10,8 @@ if (figma.editorType === 'figma') {
   // This shows the HTML page in "ui.html".
   figma.showUI(__html__);
 
-  //Figma Request
-  //https://www.figma.com/plugin-docs/making-network-requests/
-  figma.ui.postMessage({ type: 'networkRequest' })
-
   figma.ui.onmessage = async (msg) => {
-    const text = figma.createText()
-    // Make sure the new text node is visible where we're currently looking
-    text.x = figma.viewport.center.x
-    text.y = figma.viewport.center.y
 
-    await figma.loadFontAsync(text.fontName as FontName)
-    text.characters = msg
-
-    // figma.closePlugin()
-  }
-
-  // Calls to "parent.postMessage" from within the HTML page will trigger this
-  // callback. The callback will be passed the "pluginMessage" property of the
-  // posted message.
-  figma.ui.onmessage = msg => {
-    // One way of distinguishing between different types of messages sent from
-    // your HTML page is to use an object with a "type" property like this.
     if (msg.type === 'create-shapes') {
       const nodes: SceneNode[] = [];
       for (let i = 0; i < msg.count; i++) {
@@ -47,12 +25,31 @@ if (figma.editorType === 'figma') {
       figma.viewport.scrollAndZoomIntoView(nodes);
     }
 
+    if (msg.type === 'send_commands') {
+      console.log("Get message from front end!!")
+      console.log(msg)
+      const text = figma.createText()
+      // Make sure the new text node is visible where we're currently looking
+      text.x = figma.viewport.center.x
+      text.y = figma.viewport.center.y
+  
+      await figma.loadFontAsync(text.fontName as FontName)
+      text.characters = await msg.result_str
+      // text.characters = await msg.result_str
+      // text.characters = "OYYYZZZZZHHHHHH"
+    }
+
+    // figma.closePlugin()
+  }
+
+  // Calls to "parent.postMessage" from within the HTML page will trigger this
+  // callback. The callback will be passed the "pluginMessage" property of the
+  // posted message.
+
+
     // Make sure to close the plugin when you're done. Otherwise the plugin will
     // keep running, which shows the cancel button at the bottom of the screen.
     // figma.closePlugin();
-  };
-
-// Ignore these code:
 // If the plugins isn't run in Figma, run this code
 } else {
   // This plugin will open a window to prompt the user to enter a number, and
