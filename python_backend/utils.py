@@ -8,7 +8,7 @@ import requests
 import pdb
 
 
-os.environ["DEBUSSY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 def gen_text(input_msg):
 
     prompt = "Write a stunning and attractive paragraph for powerpoint slides based on the keywords below: \n\n" + "\n\n" \
@@ -28,7 +28,7 @@ def gen_text(input_msg):
         )
 
         output_texts.append(response["choices"][0]["text"])
-    
+
     return output_texts
 
 
@@ -44,14 +44,14 @@ def gen_img(input_msg):
     data = response.json()
     img_lst = data['images']
     img_links = [img['src'] for img in img_lst]
-    
+
     if not os.path.exists(f'./img_folder/{input_msg}'):
         os.makedirs(f'./img_folder/{input_msg}')
     for img_link in img_links:
         img_response = requests.get(img_link)
         with open(img_link, 'wb') as ff:
             ff.write(img_response.content)
-            
+
 
     return data
 #     {
@@ -94,6 +94,6 @@ if __name__ == '__main__':
     pdb.set_trace()
 
     print("Test over!!")
-    
+
 
 
