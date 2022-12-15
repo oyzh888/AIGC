@@ -1,7 +1,4 @@
 "use strict";
-// This file holds the main code for the plugin. It has access to the *document*.
-// You can access browser APIs such as the network by creating a UI which contains
-// a full browser environment (see documentation).
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -11,6 +8,36 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+// Helper functions
+// function clone(val: any) {
+//   return JSON.parse(JSON.stringify(val))
+// }
+function clone(val) {
+    const type = typeof val;
+    if (val === null) {
+        return null;
+    }
+    else if (type === 'undefined' || type === 'number' ||
+        type === 'string' || type === 'boolean') {
+        return val;
+    }
+    else if (type === 'object') {
+        if (val instanceof Array) {
+            return val.map(x => clone(x));
+        }
+        else if (val instanceof Uint8Array) {
+            return new Uint8Array(val);
+        }
+        else {
+            let o = {};
+            for (const key in val) {
+                o[key] = clone(val[key]);
+            }
+            return o;
+        }
+    }
+    throw 'unknown';
+}
 // Runs this code if the plugin is run in Figma
 if (figma.editorType === 'figma') {
     // This plugin will open a window to prompt the user to enter a number, and
@@ -38,9 +65,27 @@ if (figma.editorType === 'figma') {
             text.x = figma.viewport.center.x;
             text.y = figma.viewport.center.y;
             yield figma.loadFontAsync(text.fontName);
-            text.characters = yield msg.result_str;
+            text.characters = msg.result_str;
             // text.characters = await msg.result_str
-            // text.characters = "OYYYZZZZZHHHHHH"
+        }
+        if (msg.type === 'gen_text') {
+            // console.log(figma.currentPage.selection)
+            // figma.currentPage.selection[0] = await msg.result_str
+            console.log("gen_text log from code.ts");
+            console.log(msg);
+            var new_selection = clone(figma.currentPage.selection);
+            // var new_selection = figma.currentPage.selection.clone()
+            // // var new_
+            new_selection[0].characters = yield msg.result_str;
+            figma.currentPage.selection = new_selection;
+            // fills[0].color.r = 0.5
+            // rect.fills = fills
+            // figma.currentPage.selection.values = await msg.result_str
+            // Make sure the new text node is visible where we're currently looking
+            // text.x = figma.viewport.center.x
+            // text.y = figma.viewport.center.y
+            // await figma.loadFontAsync(text.fontName as FontName)
+            // text.characters = await msg.result_str
         }
         // figma.closePlugin()
     });

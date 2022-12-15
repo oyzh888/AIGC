@@ -8,15 +8,14 @@ import requests
 import pdb
 
 
-os.environ["OPENAI_API_KEY"] = "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"
-def gen_text(input_msg):
-
+os.environ["OPENAI_API_KEY"] = "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"
+def gen_text(input_msg, n_returns=3):
     prompt = "Write a stunning and attractive paragraph for powerpoint slides based on the keywords below: \n\n" + "\n\n" \
                + input_msg + "\n\n"
     openai.api_key = os.environ["OPENAI_API_KEY"]
 
     output_texts = list()
-    for _ in range(3):
+    for _ in range(n_returns):
         response = openai.Completion.create(
             model="text-davinci-003",
             prompt=prompt,
@@ -26,17 +25,13 @@ def gen_text(input_msg):
             frequency_penalty=0,
             presence_penalty=0
         )
-
         output_texts.append(response["choices"][0]["text"])
 
     return output_texts
 
 
-
 def gen_img(input_msg):
     # PARAMS = {'address':location}
-
-
     url = f"https://lexica.art/api/v1/search?q={input_msg}"
     response = requests.get(url)
     # response = requests.get(url, params = PARAMS)
@@ -49,7 +44,7 @@ def gen_img(input_msg):
         os.makedirs(f'./img_folder/{input_msg}')
     for img_link in img_links:
         img_response = requests.get(img_link)
-        with open(img_link, 'wb') as ff:
+        with open(f'{input_msg}.jpg', 'wb') as ff:
             ff.write(img_response.content)
 
 
@@ -91,8 +86,10 @@ def gen_img(input_msg):
 if __name__ == '__main__':
     msg = 'apple'
     data = gen_img(msg)
-    pdb.set_trace()
-
+    import ipdb;
+    ipdb.set_trace()
+    text = gen_text(msg, n_returns=1)
+    # pdb.set_trace()
     print("Test over!!")
 
 

@@ -2,6 +2,7 @@ import json
 from flask import Flask
 # from aimodel import real_get_image
 from flask_cors import CORS
+from utils import gen_text, gen_img
 
 app = Flask(__name__)
 CORS(app)
@@ -21,5 +22,11 @@ def create_figma_file(file_name):
 def modify_title(content):
     return f'{content}'
 
+
+@app.route('/generate_ads_text/<content>', methods=['GET', 'POST'])
+def generate_ads_text(content):
+    res = gen_text(content)
+    res = res[0]
+    return res
 
 app.run()
