@@ -1,5 +1,6 @@
 # AItist 
 
+
 ## Environment set up
 1. Set up the python environment
 
@@ -28,6 +29,8 @@ npm install --save-dev @figma/plugin-typings
 
 
 ## Run the example code
+Download figma file from 
+https://www.figma.com/file/IFT6MeKwPzBTAX5W8XyrOT/Untitled?node-id=0%3A1&t=9zArGGbJ0SK2a95P-1
 
 Backend
 ```bash

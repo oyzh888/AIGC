@@ -25,6 +25,10 @@ function clone(val: any):any {
   throw 'unknown'
 }
 
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 
 // Runs this code if the plugin is run in Figma
 if (figma.editorType === 'figma') {
@@ -52,35 +56,59 @@ if (figma.editorType === 'figma') {
     if (msg.type === 'send_commands') {
       console.log("Get message from front end!!")
       console.log(msg)
-      const text = figma.createText()
-      // Make sure the new text node is visible where we're currently looking
-      text.x = figma.viewport.center.x
-      text.y = figma.viewport.center.y
-  
-      await figma.loadFontAsync(text.fontName as FontName)
-      text.characters = msg.result_str
-      // text.characters = await msg.result_str
-    }
+      // TODO: use a dict to store id like '1:1317'
+      let title_node =  figma.getNodeById('1:1317')
+      if (title_node){
+        await figma.loadFontAsync(title_node.fontName as FontName)
+        title_node.characters = msg.result_str.toUpperCase()
+      }
+      else{
+        console.warn("Bad title node id, please set it manually")
+      }
 
-    if (msg.type === 'gen_text') {
-      // console.log(figma.currentPage.selection)
-      // figma.currentPage.selection[0] = await msg.result_str
-      console.log("gen_text log from code.ts")
-      console.log(msg)
-      var new_selection = clone(figma.currentPage.selection)
-      // var new_selection = figma.currentPage.selection.clone()
-      // // var new_
-      new_selection[0].characters = await msg.result_str
-      figma.currentPage.selection = new_selection
-      // fills[0].color.r = 0.5
-      // rect.fills = fills
-      // figma.currentPage.selection.values = await msg.result_str
-      // Make sure the new text node is visible where we're currently looking
+      // Simple create text test
+      // const text = figma.createText()
+      // // Make sure the new text node is visible where we're currently looking
       // text.x = figma.viewport.center.x
       // text.y = figma.viewport.center.y
   
       // await figma.loadFontAsync(text.fontName as FontName)
-      // text.characters = await msg.result_str
+      // text.characters = msg.result_str
+      // // text.characters = await msg.result_str
+    }
+
+    if (msg.type === 'gen_text') {
+      console.log("Get message from gen_text!!")
+      let title_node =  figma.getNodeById('1:1325')
+      if (title_node){
+        await figma.loadFontAsync(title_node.fontName as FontName)
+        title_node.characters = msg.result_str
+        // title_node.characters = capitalizeFirstLetter(msg.result_str)
+      }
+      else{
+        console.warn("Bad title node id, please set it manually")
+      }
+
+      
+      // If you want to create new text, you might need to following code snippets
+      // // console.log(figma.currentPage.selection)
+      // // figma.currentPage.selection[0] = await msg.result_str
+      // console.log("gen_text log from code.ts")
+      // console.log(msg)
+      // var new_selection = clone(figma.currentPage.selection)
+      // // var new_selection = figma.currentPage.selection.clone()
+      // // // var new_
+      // new_selection[0].characters = await msg.result_str
+      // figma.currentPage.selection = new_selection
+      // // fills[0].color.r = 0.5
+      // // rect.fills = fills
+      // // figma.currentPage.selection.values = await msg.result_str
+      // // Make sure the new text node is visible where we're currently looking
+      // // text.x = figma.viewport.center.x
+      // // text.y = figma.viewport.center.y
+  
+      // // await figma.loadFontAsync(text.fontName as FontName)
+      // // text.characters = await msg.result_str
     }
 
     // figma.closePlugin()
