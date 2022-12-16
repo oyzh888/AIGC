@@ -1,4 +1,42 @@
+// Hint:
+//TODO: UtoDian/Github/plugin-samples/metacards
+
+// res = fetch('https://lexica-serve-encoded-images.sharif.workers.dev/md/003cc1f0-e52a-400f-808f-358183156495')
+// .then(response => response.blob())
+res = fetch('https://lexica-serve-encoded-images.sharif.workers.dev/md/003cc1f0-e52a-400f-808f-358183156495')
+.then(response => response.arrayBuffer())
+res.then(
+  (image) => {
+    // const newFills = []
+    console.log(image)
+    let img_data = new Uint8Array(image)
+    let figma_image = figma.createImage(img_data)
+    console.log('figma_image', figma_image)
+    figma.getNodeById('1:7').fills = figma_image
+  }
+)
+
+// const figma_image = figma.createImage(image)
+new Uint8Array(response.arrayBuffer())
+let img_node = figma.getNodeById('1:7')
+
+
+
+
+res = fetch('https://lexica-serve-encoded-images.sharif.workers.dev/md/003cc1f0-e52a-400f-808f-358183156495')
+res = res.then(response => response)
+
+fetch('https://lexica-serve-encoded-images.sharif.workers.dev/md/003cc1f0-e52a-400f-808f-358183156495')
+.then(response => response.blob())
+.then(image => console.log(image))
+
+
 // Modify
+file.getBytesAsync().then(bytes => {
+  const image = figma.createImage(bytes)
+
+let file_path = "/Users/ouyangzhihao/Library/Mobile\ Documents/com~apple~CloudDocs/PycharmProjects/UtoDian/Github/AIGC/python_backend/img_folder/apple/0.jpg"
+figma.file.getBytesAsync.getBytesAsync(file_path)
 
 const colors = figma.currentPage.findAll(n => n.name === "as")
 

@@ -6,9 +6,9 @@ import os
 # from PIL import Image
 import requests
 import pdb
+import pathlib
 
-
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 def gen_text(input_msg, n_returns=3):
     prompt = "Write a stunning and attractive paragraph for powerpoint slides based on the keywords below: \n\n" + "\n\n" \
                + input_msg + "\n\n"
@@ -30,25 +30,42 @@ def gen_text(input_msg, n_returns=3):
     return output_texts
 
 
-def gen_img(input_msg):
+def gen_img(input_msg, topk=1):
+    # import ipdb; ipdb.set_trace()
     # PARAMS = {'address':location}
+    print('Sending request to lexica server')
     url = f"https://lexica.art/api/v1/search?q={input_msg}"
     response = requests.get(url)
     # response = requests.get(url, params = PARAMS)
+    return_dict = {
+        'images': [],
+        'urls': [],
+        'local_pathes': []
+    }
 
     data = response.json()
-    img_lst = data['images']
+    img_lst = data['images'][:topk]
     img_links = [img['src'] for img in img_lst]
 
-    if not os.path.exists(f'./img_folder/{input_msg}'):
-        os.makedirs(f'./img_folder/{input_msg}')
-    for img_link in img_links:
+    img_folder = pathlib.Path(f'./img_folder/{input_msg}')
+    img_folder.mkdir(exist_ok=True)
+
+    # if not os.path.exists(f'./img_folder/{input_msg}'):
+    #     os.makedirs(f'./img_folder/{input_msg}')
+    for i, img_link in enumerate(img_links):
+        print(f"img_link {i}:", img_link)
         img_response = requests.get(img_link)
-        with open(f'{input_msg}.jpg', 'wb') as ff:
+        # os.path.abspath("mydir/myfile.txt")
+        img_path = img_folder / f'{i}.jpg'
+        with open(img_path, 'wb') as ff:
             ff.write(img_response.content)
-
-
-    return data
+        
+        # Bug: We need to jsonfiy image data
+        # return_dict['imagqes'].append(img_response.content)
+        return_dict['urls'].append(img_link)
+        return_dict['local_pathes'].append(str(img_path.absolute()))
+    
+    return return_dict
 #     {
 #     "images": [
 #         {

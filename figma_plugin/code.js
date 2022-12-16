@@ -60,7 +60,7 @@ if (figma.editorType === 'figma') {
             figma.currentPage.selection = nodes;
             figma.viewport.scrollAndZoomIntoView(nodes);
         }
-        if (msg.type === 'send_commands') {
+        else if (msg.type === 'send_commands') {
             console.log("Get message from front end!!");
             console.log(msg);
             // TODO: use a dict to store id like '1:1317'
@@ -81,7 +81,7 @@ if (figma.editorType === 'figma') {
             // text.characters = msg.result_str
             // // text.characters = await msg.result_str
         }
-        if (msg.type === 'gen_text') {
+        else if (msg.type === 'gen_text') {
             console.log("Get message from gen_text!!");
             let title_node = figma.getNodeById('1:1325');
             if (title_node) {
@@ -111,6 +111,10 @@ if (figma.editorType === 'figma') {
             // // await figma.loadFontAsync(text.fontName as FontName)
             // // text.characters = await msg.result_str
         }
+        // else if (msg.type == 'gen_img'){
+        //   file.getBytesAsync().then(bytes => {
+        //     const image = figma.createImage(bytes)
+        // }
         // figma.closePlugin()
     });
     // Calls to "parent.postMessage" from within the HTML page will trigger this
