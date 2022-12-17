@@ -7,8 +7,11 @@ import os
 import requests
 import pdb
 import pathlib
+from googletrans import Translator
+translator = Translator()
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
+# 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
 def gen_text(input_msg, n_returns=3):
     prompt = "Write a stunning and attractive paragraph for powerpoint slides based on the keywords below: \n\n" + "\n\n" \
                + input_msg + "\n\n"
@@ -33,9 +36,10 @@ def gen_text(input_msg, n_returns=3):
 def gen_img(input_msg, topk=1, debug=False):
     if debug:
         return {'images': [], 'urls': ['https://lexica-serve-encoded-images.sharif.workers.dev/md/003cc1f0-e52a-400f-808f-358183156495'], 'local_pathes': ['/Users/ouyangzhihao/Library/Mobile Documents/com~apple~CloudDocs/PycharmProjects/UtoDian/Github/AIGC/python_backend/img_folder/apple/0.jpg']}
-    # import ipdb; ipdb.set_trace()
     # PARAMS = {'address':location}
     print('Sending request to lexica server')
+    # Enforce the text become english to call the lexica API
+    input_msg = translator.translate(input_msg).text
     url = f"https://lexica.art/api/v1/search?q={input_msg}"
     print(url)
     # import ipdb; ipdb.set_trace()
