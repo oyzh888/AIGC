@@ -3,7 +3,9 @@
 
 ## Environment set up
 1. Set up the python environment
-
+- Set open AI key
+Please go to openai playground to setup your own openAI key. And modify the `os.environ["OPENAI_API_KEY"] ` at ` python_backend/utils.py`
+- Run
 ```bash
 cd python_backend
 pip install -r requirements.txt
