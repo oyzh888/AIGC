@@ -4,20 +4,17 @@
 <button id="send_commands">Send</button>
 
 <p style="opacity: 0.01;">Count: <input id="count" type="number" value="5"></p>
-<button id="create">Create</button>
-<button id="cancel">Cancel</button>
+<!-- <button id="create">Create</button> -->
+<button id="gen_image">GenImage</button>
 <button id="gen_text">GenText</button>
 <script>
 
-document.getElementById('create').onclick = () => {
-  const textbox = document.getElementById('count');
-  const count = parseInt(textbox.value, 10);
-  parent.postMessage({ pluginMessage: { type: 'create-shapes', count } }, '*')
-}
+// document.getElementById('create').onclick = () => {
+//   const textbox = document.getElementById('count');
+//   const count = parseInt(textbox.value, 10);
+//   parent.postMessage({ pluginMessage: { type: 'create-shapes', count } }, '*')
+// }
 
-document.getElementById('cancel').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
-}
 
 document.getElementById('gen_text').onclick = () => {
   const text_content = document.getElementById('command_content').value
@@ -27,6 +24,25 @@ document.getElementById('gen_text').onclick = () => {
   .then(
     (result_str) => {
       parent.postMessage({ pluginMessage: { type: 'gen_text', result_str } }, '*')
+    }
+  );
+}
+
+document.getElementById('gen_image').onclick = () => {
+  const text_content = document.getElementById('command_content').value
+  console.log("call gen_image ")
+  fetch('http://127.0.0.1:5000/generate_ads_image/' + text_content)
+  .then((response) => {
+    // response.json()
+    console.log("response from gen_image:", response)
+    return response.json()
+  })
+  .then(
+    (res_json) => {
+      console.log('res_json', res_json)
+      console.log("res_json['urls'][0]", res_json['urls'][0])
+      img_url = res_json['urls'][0]
+      parent.postMessage({ pluginMessage: { type: 'gen_image', img_url } }, '*')
     }
   );
 }

@@ -8,7 +8,7 @@ import requests
 import pdb
 import pathlib
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 def gen_text(input_msg, n_returns=3):
     prompt = "Write a stunning and attractive paragraph for powerpoint slides based on the keywords below: \n\n" + "\n\n" \
                + input_msg + "\n\n"
@@ -30,12 +30,21 @@ def gen_text(input_msg, n_returns=3):
     return output_texts
 
 
-def gen_img(input_msg, topk=1):
+def gen_img(input_msg, topk=1, debug=False):
+    if debug:
+        return {'images': [], 'urls': ['https://lexica-serve-encoded-images.sharif.workers.dev/md/003cc1f0-e52a-400f-808f-358183156495'], 'local_pathes': ['/Users/ouyangzhihao/Library/Mobile Documents/com~apple~CloudDocs/PycharmProjects/UtoDian/Github/AIGC/python_backend/img_folder/apple/0.jpg']}
     # import ipdb; ipdb.set_trace()
     # PARAMS = {'address':location}
     print('Sending request to lexica server')
     url = f"https://lexica.art/api/v1/search?q={input_msg}"
+    print(url)
+    # import ipdb; ipdb.set_trace()
     response = requests.get(url)
+    # import urllib.request
+    # response = urllib.request.urlopen(url)
+    # response = response.read()
+    print("Finish Call")
+
     # response = requests.get(url, params = PARAMS)
     return_dict = {
         'images': [],
@@ -54,11 +63,10 @@ def gen_img(input_msg, topk=1):
     #     os.makedirs(f'./img_folder/{input_msg}')
     for i, img_link in enumerate(img_links):
         print(f"img_link {i}:", img_link)
-        img_response = requests.get(img_link)
-        # os.path.abspath("mydir/myfile.txt")
+        # img_response = requests.get(img_link)
         img_path = img_folder / f'{i}.jpg'
-        with open(img_path, 'wb') as ff:
-            ff.write(img_response.content)
+        # with open(img_path, 'wb') as ff:
+        #     ff.write(img_response.content)
         
         # Bug: We need to jsonfiy image data
         # return_dict['imagqes'].append(img_response.content)

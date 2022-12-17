@@ -110,11 +110,36 @@ if (figma.editorType === 'figma') {
       // // text.characters = await msg.result_str
     }
 
-    // else if (msg.type == 'gen_img'){
-    //   file.getBytesAsync().then(bytes => {
-    //     const image = figma.createImage(bytes)
+    else if (msg.type == 'gen_image'){
+      console.log("gen_image!!!!!!!!!!!!!")
+      fetch(msg.img_url)
+      .then(response => response.arrayBuffer())
+      .then(
+        (image) => {
+          // const newFills = []
+          console.log(image)
+          let img_data = new Uint8Array(image)
+          let figma_image = figma.createImage(img_data)
+          // console.log('figma_image', figma_image)
+          // figma.getNodeById('1:7').fills = figma_image
+          let background_image_node =  figma.getNodeById('1:7')
+          if (background_image_node){
+            background_image_node.fills = [
+              {
+                blendMode: 'NORMAL',
+                imageHash: figma_image.hash,
+                type: 'IMAGE',
+                visible: true,
+                scaleMode: 'FILL',
+              },
+            ];
+          } else{
+            console.warn("Bad title node id, please set it manually")
+          }
+        }
+      )
 
-    // }
+    }
 
     // figma.closePlugin()
   }
