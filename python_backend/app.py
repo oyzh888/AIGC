@@ -2,8 +2,9 @@ import json
 from flask import Flask
 # from aimodel import real_get_image
 from flask_cors import CORS
-from utils import gen_text, gen_img
+from utils import gen_text, gen_img, ai_freestyle_image_generate, ai_freestyle_text_generate
 from flask import jsonify
+
 
 app = Flask(__name__)
 CORS(app)
@@ -42,6 +43,18 @@ def generate_ads_image(content):
     #     return b
     # res = res[0]
     # return res
+
+
+@app.route('/freely_generate_image/<content>', methods=['GET', 'POST'])
+def freely_generate_image(content):
+    res = ai_freestyle_image_generate(content)
+    return res
+
+
+@app.route('/freely_generate_text/<content>', methods=['GET', 'POST'])
+def freely_generate_text(content):
+    res = ai_freestyle_text_generate(content)
+    return res
 
 
 

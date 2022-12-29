@@ -88,26 +88,6 @@ if (figma.editorType === 'figma') {
         console.warn("Bad title node id, please set it manually")
       }
 
-      
-      // If you want to create new text, you might need to following code snippets
-      // // console.log(figma.currentPage.selection)
-      // // figma.currentPage.selection[0] = await msg.result_str
-      // console.log("gen_text log from code.ts")
-      // console.log(msg)
-      // var new_selection = clone(figma.currentPage.selection)
-      // // var new_selection = figma.currentPage.selection.clone()
-      // // // var new_
-      // new_selection[0].characters = await msg.result_str
-      // figma.currentPage.selection = new_selection
-      // // fills[0].color.r = 0.5
-      // // rect.fills = fills
-      // // figma.currentPage.selection.values = await msg.result_str
-      // // Make sure the new text node is visible where we're currently looking
-      // // text.x = figma.viewport.center.x
-      // // text.y = figma.viewport.center.y
-  
-      // // await figma.loadFontAsync(text.fontName as FontName)
-      // // text.characters = await msg.result_str
     }
 
     else if (msg.type == 'gen_image'){
@@ -120,7 +100,7 @@ if (figma.editorType === 'figma') {
           console.log(image)
           let img_data = new Uint8Array(image)
           let figma_image = figma.createImage(img_data)
-          // console.log('figma_image', figma_image)
+          console.log('figma_image', figma_image)
           // figma.getNodeById('1:7').fills = figma_image
           let background_image_node =  figma.getNodeById('1:7')
           if (background_image_node){
@@ -138,8 +118,30 @@ if (figma.editorType === 'figma') {
           }
         }
       )
+    }
+
+    else if (msg.type === 'gen_free_text') {
+      console.log("Get message from gen_free_text!!")
+      // console.log(figma.currentPage.selection)
+      var title_node =  figma.currentPage.selection[0]
+      console.log(title_node)
+      if (title_node){
+        console.log('title_node.type', title_node.type)
+        if (title_node){
+          await figma.loadFontAsync(title_node.fontName)
+          title_node.characters = msg.result_str
+          // title_node.characters = capitalizeFirstLetter(msg.result_str)
+        }else{
+          console.warn("Selected element was not text!")
+        }
+      }
+      else{
+        console.warn("No item was selected")
+      }
 
     }
+
+
 
     // figma.closePlugin()
   }

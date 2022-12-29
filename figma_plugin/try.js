@@ -5,16 +5,27 @@
 // .then(response => response.blob())
 res = fetch('https://lexica-serve-encoded-images.sharif.workers.dev/md/003cc1f0-e52a-400f-808f-358183156495')
 .then(response => response.arrayBuffer())
-res.then(
+.then(
   (image) => {
     // const newFills = []
     console.log(image)
     let img_data = new Uint8Array(image)
     let figma_image = figma.createImage(img_data)
     console.log('figma_image', figma_image)
-    figma.getNodeById('1:7').fills = figma_image
+    // figma.getNodeById('1:7').fills = figma_image
+    figma.getNodeById('1:7').fills = [
+      {
+        blendMode: 'NORMAL',
+        imageHash: figma_image.hash,
+        type: 'IMAGE',
+        visible: true,
+        scaleMode: 'FILL',
+      },
+    ];
   }
 )
+
+
 
 // const figma_image = figma.createImage(image)
 new Uint8Array(response.arrayBuffer())

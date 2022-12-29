@@ -2,23 +2,31 @@
 
 <p>Your commands: <input id="command_content" type="text"> </input></p>
 <button id="send_commands">Send</button>
-
-<p style="opacity: 0.01;">Count: <input id="count" type="number" value="5"></p>
+<!-- <p style="opacity: 0.01;">Count: <input id="count" type="number" value="5"></p> -->
 <!-- <button id="create">Create</button> -->
 <button id="gen_image">GenImage</button>
 <button id="gen_text">GenText</button>
+
+
+<p>Free commands: <input id="free_text_content" type="text"> </input></p>
+<button id="gen_free_text">GenFreeText</button>
+<!-- <button id="gen_free_image">Send</button> -->
 <script>
 
-// document.getElementById('create').onclick = () => {
-//   const textbox = document.getElementById('count');
-//   const count = parseInt(textbox.value, 10);
-//   parent.postMessage({ pluginMessage: { type: 'create-shapes', count } }, '*')
-// }
+document.getElementById('gen_free_text').onclick = () => {
+  const textbox = document.getElementById('free_text_content');
+  fetch('http://127.0.0.1:5000/freely_generate_text/' + textbox.value)
+  .then((response) => response.text())
+  .then(
+    (result_str) => {
+      parent.postMessage({ pluginMessage: { type: 'gen_free_text', result_str } }, '*')
+    }
+  );
+}
 
 
 document.getElementById('gen_text').onclick = () => {
   const text_content = document.getElementById('command_content').value
-  // fetch('http://127.0.0.1:5000/modify_title/' + text_content)
   fetch('http://127.0.0.1:5000/generate_ads_text/' + text_content)
   .then((response) => response.text())
   .then(
