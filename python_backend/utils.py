@@ -14,7 +14,8 @@ import random
 
 translator = Translator()
 
-os.environ["OPENAI_API_KEY"] = "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"
+#os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 def call_openai_text(prompt_text, n_returns=1):
     output_texts = []
     openai.api_key = os.environ["OPENAI_API_KEY"]
@@ -40,6 +41,52 @@ def gen_text(input_msg, n_returns=1):
             + input_msg + "\n\n"
         output_texts = call_openai_text(prompt)
     return output_texts
+
+
+def gen_text_json(input_msg, n_returns=1):
+    # input: the user input message
+    # output: a json contains {title, sub_title, main_body, item1,item2,item3, decoration_text, time, address}
+
+    result = {'title':[],
+            'sub_title':[],
+            'main_body':[],
+            'item1':[],
+            'item2':[],
+            'item3':[],
+            'decoration_text':[],
+            'time':"",
+            'address':"" 
+        }
+    
+    prompt = "Write a three-words tagline, a long-sentence sub-title, a long product description, three item key texts, and one paragraph of decoration text for \n\n" \
+            + input_msg + "\n"
+    output_texts = call_openai_text(prompt)  # a list of string
+    text_lst = output_texts[0].split('\n')
+    for text in text_lst:
+        if text.startswith('Tagline:'):  # the title information
+            result['title'] = text.split(':')[1].strip()
+
+        elif text.startswith('Sub-title:'): # the sub-title information
+            result['sub_title'] = text.split(':')[1].strip()
+        elif text.startswith('Product Description:'): # the main-boday information
+            result['main_body'] = text.split(':')[1].strip()
+
+        elif text.startswith('1. '):  #  item 1
+            result['item1'] = text.split('.')[1].strip()
+        elif text.startswith('2. '): #  item 2
+            result['item2'] = text.split('.')[1].strip()
+        elif text.startswith('3. '):  # item 3
+            result['item3'] = text.split('.')[1].strip()
+
+        elif text.startswith('Decoration Text:'):  # decoration text information
+            result['decoration_text'] = text.split(':')[1].strip()
+
+    return result
+
+
+
+
+
 
 
 def ai_freestyle_text_generate(input_msg):
@@ -150,12 +197,16 @@ def gen_img(input_msg, topk=1, debug=DEBUG):
 
 
 if __name__ == '__main__':
-    msg = 'apple'
-    data = gen_img(msg)
-    import ipdb;
-    ipdb.set_trace()
-    text = gen_text(msg, n_returns=1)
-    # pdb.set_trace()
+    # msg = 'apple'
+    # data = gen_img(msg)
+    # import ipdb;
+    # ipdb.set_trace()
+    # text = gen_text(msg, n_returns=1)
+
+
+    msg = "Whatsmore cake party at 500 Lawrence Expy, Sunnyvale, CA 94085 this Saturday at 11:00 pm"
+    json_file = gen_text_json(msg)
+    pdb.set_trace()
     print("Test over!!")
 
 
