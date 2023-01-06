@@ -161,8 +161,32 @@ def gen_img(input_msg, topk=1, debug=DEBUG):
     random.shuffle(img_lst)
 
     img_links = img_links + [img['src']['original'] for img in img_lst]
+    print("Finish pexel call")
+
+
+
+    ################### using unsplash block ######################
+    # you need to register pexel to get authorization token or communicate with the team to unlock limit rate
+    # current 50 queries per hour
+    headers = {'Authorization': 'Client-ID IbtfMBjYynoAqCA0ISwJ45X1B4UhTbHTNm5lrT1EmAc'}
+    url = f"https://api.unsplash.com/search/photos?per_page={topk}&query={input_msg}"
+
+    print(url)
+    response = requests.get(url, headers=headers)
+
+
+    data = response.json()
     
-    print("Finish Call")
+    img_lst = data['results']
+
+    assert len(img_lst) == topk
+    random.shuffle(img_lst)
+
+
+    img_links = img_links + [img['urls']['raw'] for img in img_lst]  
+
+    
+    print("Finish unsplash Call")
 
 
 
@@ -269,7 +293,53 @@ def gen_img_pexels(input_msg, topk=1):
     return return_dict
 
     
+def gen_img_unsplash(input_msg, topk=1):
+    print('Sending request to unsplash server')
 
+
+    # you need to register pexel to get authorization token or communicate with the team to unlock limit rate
+    # current 50 queries per hour
+    headers = {'Authorization': 'Client-ID IbtfMBjYynoAqCA0ISwJ45X1B4UhTbHTNm5lrT1EmAc'}
+    url = f"https://api.unsplash.com/search/photos?per_page={topk}&query={input_msg}"
+
+    print(url)
+    response = requests.get(url, headers=headers)
+
+
+
+    return_dict = {
+        'images': [],
+        'urls': [],
+        'local_pathes': []
+    }
+
+    data = response.json()
+    
+    img_lst = data['results']
+
+    assert len(img_lst) == topk
+    random.shuffle(img_lst)
+
+    
+
+    img_links = [img['urls']['raw'] for img in img_lst]
+    img_folder = pathlib.Path(f'./img_folder/{input_msg}')
+    # img_folder.mkdir(exist_ok=True)
+    if not os.path.exists(f'./img_folder/{input_msg}'):
+        os.makedirs(f'./img_folder/{input_msg}')
+    for i, img_link in enumerate(img_links):
+        print(f"img_link {i}:", img_link)
+        # img_response = requests.get(img_link)
+        img_path = img_folder / f'{i}.jpg'
+        # with open(img_path, 'wb') as ff:
+        #     ff.write(img_response.content)
+        
+        # Bug: We need to jsonfiy image data
+        # return_dict['imagqes'].append(img_response.content)
+        return_dict['urls'].append(img_link)
+        return_dict['local_pathes'].append(str(img_path.absolute()))
+    
+    return return_dict
 
 
 
@@ -287,7 +357,8 @@ if __name__ == '__main__':
     # json_file = gen_text_json(msg)
 
     msg = 'nature'
-    results = gen_img_pexels(msg, 3)
+    # results = gen_img_pexels(msg, 3)
+    results = gen_img_unsplash(msg, 3)
     pdb.set_trace()
     print("Test over!!")
 
