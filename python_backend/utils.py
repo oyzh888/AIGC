@@ -14,8 +14,7 @@ import random
 
 translator = Translator()
 
-#os.environ["OPENAI_API_KEY"] = "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"
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 def call_openai_text(prompt_text, n_returns=1):
     output_texts = []
     openai.api_key = os.environ["OPENAI_API_KEY"]
@@ -144,6 +143,30 @@ def gen_img(input_msg, topk=1, debug=DEBUG):
 
     img_links = [img['src'] for img in img_lst]
 
+
+
+    ################### using pexel block #########################
+
+    headers = {'Authorization': '563492ad6f917000010000013fcefd17749547ad943acd8de743dbf6'}
+    url = f"https://api.pexels.com/v1/search?query={input_msg}&per_page={topk}"
+
+    print(url)
+    response = requests.get(url, headers=headers)
+
+    data = response.json()
+    
+    img_lst = data['photos']
+
+    assert len(img_lst) == topk
+    random.shuffle(img_lst)
+
+    img_links = img_links + [img['src']['original'] for img in img_lst]
+    
+    print("Finish Call")
+
+
+
+
     img_folder = pathlib.Path(f'./img_folder/{input_msg}')
     img_folder.mkdir(exist_ok=True)
 
@@ -196,6 +219,62 @@ def gen_img(input_msg, topk=1, debug=DEBUG):
 # }
 
 
+def gen_img_pexels(input_msg, topk=1):
+    print('Sending request to pexel server')
+
+
+    # you need to register pexel to get authorization token or communicate with the team to unlock limit rate
+    # current 200 queries per hour
+    headers = {'Authorization': '563492ad6f917000010000013fcefd17749547ad943acd8de743dbf6'}
+    url = f"https://api.pexels.com/v1/search?query={input_msg}&per_page={topk}"
+
+    print(url)
+    response = requests.get(url, headers=headers)
+
+
+
+
+    return_dict = {
+        'images': [],
+        'urls': [],
+        'local_pathes': []
+    }
+
+    data = response.json()
+    
+    img_lst = data['photos']
+
+    assert len(img_lst) == topk
+    random.shuffle(img_lst)
+
+    
+
+    img_links = [img['src']['original'] for img in img_lst]
+    img_folder = pathlib.Path(f'./img_folder/{input_msg}')
+    # img_folder.mkdir(exist_ok=True)
+    if not os.path.exists(f'./img_folder/{input_msg}'):
+        os.makedirs(f'./img_folder/{input_msg}')
+    for i, img_link in enumerate(img_links):
+        print(f"img_link {i}:", img_link)
+        # img_response = requests.get(img_link)
+        img_path = img_folder / f'{i}.jpg'
+        # with open(img_path, 'wb') as ff:
+        #     ff.write(img_response.content)
+        
+        # Bug: We need to jsonfiy image data
+        # return_dict['imagqes'].append(img_response.content)
+        return_dict['urls'].append(img_link)
+        return_dict['local_pathes'].append(str(img_path.absolute()))
+    
+    return return_dict
+
+    
+
+
+
+
+
+
 if __name__ == '__main__':
     # msg = 'apple'
     # data = gen_img(msg)
@@ -204,8 +283,11 @@ if __name__ == '__main__':
     # text = gen_text(msg, n_returns=1)
 
 
-    msg = "Whatsmore cake party at 500 Lawrence Expy, Sunnyvale, CA 94085 this Saturday at 11:00 pm"
-    json_file = gen_text_json(msg)
+    # msg = "Whatsmore cake party at 500 Lawrence Expy, Sunnyvale, CA 94085 this Saturday at 11:00 pm"
+    # json_file = gen_text_json(msg)
+
+    msg = 'nature'
+    results = gen_img_pexels(msg, 3)
     pdb.set_trace()
     print("Test over!!")
 
