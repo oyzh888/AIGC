@@ -1,9 +1,9 @@
 import os
 import openai
 
-# os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 # Shane
-os.environ["OPENAI_API_KEY"] = "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"
+# os.environ["OPENAI_API_KEY"] = "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"
 
 class OpenaiUtils:
 
