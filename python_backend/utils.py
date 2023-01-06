@@ -1,7 +1,3 @@
-
-
-import time
-import openai
 import os
 # from PIL import Image
 import requests
@@ -9,38 +5,11 @@ import pdb
 import pathlib
 from googletrans import Translator
 from config import DEBUG
-import numpy as np
 import random
 
+from ai.utils.openai_utils import OpenaiUtils
+
 translator = Translator()
-
-os.environ["OPENAI_API_KEY"] = "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"
-def call_openai_text(prompt_text, n_returns=1):
-    output_texts = []
-    openai.api_key = os.environ["OPENAI_API_KEY"]
-    for _ in range(n_returns):
-        response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=prompt_text,
-            temperature=0.7,
-            max_tokens=256,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0
-        )
-        output_texts.append(response["choices"][0]["text"])
-    return output_texts
-
-
-def gen_text(input_msg, n_returns=1):
-    if DEBUG:
-        output_texts = [f"DEBUG {input_msg} DEBUG", f"DEBUG {input_msg} DEBUG", f"DEBUG {input_msg} DEBUG"]
-    else:
-        prompt = "Write a stunning and attractive paragraph for advertisement poster based on the keywords below: \n\n" + "\n\n" \
-            + input_msg + "\n\n"
-        output_texts = call_openai_text(prompt)
-    return output_texts
-
 
 def gen_text_json(input_msg, n_returns=1):
     # input: the user input message
@@ -59,7 +28,7 @@ def gen_text_json(input_msg, n_returns=1):
     
     prompt = "Write a three-words tagline, a long-sentence sub-title, a long product description, three item key texts, and one paragraph of decoration text for \n\n" \
             + input_msg + "\n"
-    output_texts = call_openai_text(prompt)  # a list of string
+    output_texts = OpenaiUtils.call_openai_text(prompt)  # a list of string
     text_lst = output_texts[0].split('\n')
     for text in text_lst:
         if text.startswith('Tagline:'):  # the title information
@@ -93,7 +62,7 @@ def ai_freestyle_text_generate(input_msg):
         input_msg = f"DEBUG {input_msg} DEBUG"
     else:
         prompt = f"{input_msg}"
-        input_msg = call_openai_text(prompt)[0]
+        input_msg = OpenaiUtils.call_openai_text(prompt)[0]
     return input_msg
 
 

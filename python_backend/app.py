@@ -1,9 +1,9 @@
 import json
 from flask import Flask
-# from aimodel import real_get_image
 from flask_cors import CORS
-from utils import gen_text, gen_img, ai_freestyle_image_generate, ai_freestyle_text_generate
-from flask import jsonify
+
+from ai.generator.img import RecommendationBasedImageGenerator, FreestyleImageGenerator
+from ai.generator.text import AdPosterTextGenerator, FreestyleTextGenerator
 
 
 app = Flask(__name__)
@@ -27,33 +27,25 @@ def modify_title(content):
 
 @app.route('/generate_ads_text/<content>', methods=['GET', 'POST'])
 def generate_ads_text(content):
-    res = gen_text(content)
-    res = res[0]
+    res = AdPosterTextGenerator.generate_text(content)
     return res
 
 
 @app.route('/generate_ads_image/<content>', methods=['GET', 'POST'])
 def generate_ads_image(content):
-    res = gen_img(content)
-    # res = jsonify(res)
+    res = RecommendationBasedImageGenerator.generate_img(content, top_k=1)
     return res
-    # with open("img.png", "rb") as image:
-    #     f = image.read()
-    #     b = bytearray(f)
-    #     return b
-    # res = res[0]
-    # return res
 
 
 @app.route('/freely_generate_image/<content>', methods=['GET', 'POST'])
 def freely_generate_image(content):
-    res = ai_freestyle_image_generate(content)
+    res = FreestyleImageGenerator.generate_img(content, top_k=1)
     return res
 
 
 @app.route('/freely_generate_text/<content>', methods=['GET', 'POST'])
 def freely_generate_text(content):
-    res = ai_freestyle_text_generate(content)
+    res = FreestyleTextGenerator.generate_text(content)
     return res
 
 
