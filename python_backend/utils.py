@@ -243,14 +243,15 @@ def gen_img(input_msg, topk=1, debug=DEBUG):
 # }
 
 
-def gen_img_pexels(input_msg, topk=1):
+def gen_img_pexels(input_msg, topk=1, size='small'):
+    # size = {'small', 'medium', 'large'} {4M, 12M, 24M}
     print('Sending request to pexel server')
 
 
     # you need to register pexel to get authorization token or communicate with the team to unlock limit rate
     # current 200 queries per hour
     headers = {'Authorization': '563492ad6f917000010000013fcefd17749547ad943acd8de743dbf6'}
-    url = f"https://api.pexels.com/v1/search?query={input_msg}&per_page={topk}"
+    url = f"https://api.pexels.com/v1/search?query={input_msg}&per_page={topk}&size={size}"
 
     print(url)
     response = requests.get(url, headers=headers)
@@ -293,7 +294,7 @@ def gen_img_pexels(input_msg, topk=1):
     return return_dict
 
     
-def gen_img_unsplash(input_msg, topk=1):
+def gen_img_unsplash(input_msg, topk=1,width=512, height=512):
     print('Sending request to unsplash server')
 
 
@@ -320,9 +321,8 @@ def gen_img_unsplash(input_msg, topk=1):
     assert len(img_lst) == topk
     random.shuffle(img_lst)
 
-    
 
-    img_links = [img['urls']['raw'] for img in img_lst]
+    img_links = [img['urls']['raw'] + f"&w={width}&h={height}" for img in img_lst]
     img_folder = pathlib.Path(f'./img_folder/{input_msg}')
     # img_folder.mkdir(exist_ok=True)
     if not os.path.exists(f'./img_folder/{input_msg}'):
@@ -357,8 +357,8 @@ if __name__ == '__main__':
     # json_file = gen_text_json(msg)
 
     msg = 'nature'
-    # results = gen_img_pexels(msg, 3)
-    results = gen_img_unsplash(msg, 3)
+    results = gen_img_pexels(msg, 3, size='medium')
+    # results = gen_img_unsplash(msg, 3, width=256, height=256)
     pdb.set_trace()
     print("Test over!!")
 
