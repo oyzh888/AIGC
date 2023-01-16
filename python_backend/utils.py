@@ -8,6 +8,7 @@ from config import DEBUG
 import random
 
 from ai.utils.openai_utils import OpenaiUtils
+import json
 
 translator = Translator()
 
@@ -76,7 +77,7 @@ def ai_freestyle_image_generate(input_msg, n_returns=3):
     # return input_msg
 
 
-def gen_img(input_msg, topk=1, debug=DEBUG):
+def gen_img(input_msg, topk=1, width=512, height=512, size='small', debug=DEBUG):
     if debug:
         return {'images': [], 'urls': ['https://lexica-serve-encoded-images.sharif.workers.dev/md/003cc1f0-e52a-400f-808f-358183156495'], 'local_pathes': ['/Users/ouyangzhihao/Library/Mobile Documents/com~apple~CloudDocs/PycharmProjects/UtoDian/Github/AIGC/python_backend/img_folder/apple/0.jpg']}
     # PARAMS = {'address':location}
@@ -117,7 +118,7 @@ def gen_img(input_msg, topk=1, debug=DEBUG):
     ################### using pexel block #########################
 
     headers = {'Authorization': '563492ad6f917000010000013fcefd17749547ad943acd8de743dbf6'}
-    url = f"https://api.pexels.com/v1/search?query={input_msg}&per_page={topk}"
+    url = f"https://api.pexels.com/v1/search?query={input_msg}&per_page={topk}&size={size}"
 
     print(url)
     response = requests.get(url, headers=headers)
@@ -152,7 +153,7 @@ def gen_img(input_msg, topk=1, debug=DEBUG):
     random.shuffle(img_lst)
 
 
-    img_links = img_links + [img['urls']['raw'] for img in img_lst]  
+    img_links = img_links + [img['urls']['raw']+f"&w={width}&h={height}" for img in img_lst]  
 
     
     print("Finish unsplash Call")
@@ -312,6 +313,85 @@ def gen_img_unsplash(input_msg, topk=1,width=512, height=512):
 
 
 
+def genTextImage(input_msg, number_templates=3, debug=DEBUG):
+
+    # input: commands and number of templates
+    # output: a list of json templates
+    if debug:
+        result = list()
+        for i in range(number_templates):
+            with open(f"./template_jsons/aitistTemplate_{(i+1):05d}.json") as inpt:
+                template = json.load(inpt)
+                result.append(template)
+        return result
+
+    
+
+
+
+    # assume the input json is json string 
+    # poster_info = json.loads(input_json) 
+
+    # assume the default input json is already dictionary
+    poster_info = input_json
+
+    template_list = poster_info['results'] # each template is a dictionary
+
+    for template in template_list:
+        current_commands = template['commands'] # the input message from user
+
+        elements_list = template['elements'] # each element contains 1 image element(three images) + 
+                                             # 1 title text element(three options) + 
+                                             # 1 body text element (three options) +
+                                             # 1 address text element + 
+                                             # 1 time text element
+
+        # handle image element
+        image_element = elements_list[0]
+        # TODO is this the user to input width and height? 
+        image_width, image_height = image_element['position']['width'], image_element['position']['height']
+        image_prompt = f"attractive, stunning, commercial advertisement, promotional, background image for {current_commands} | Duplication: -1"
+        fetched_imgs = gen_img(image_prompt, topk=3, width=image_width, height=image_height)  # 3 * 3
+        image_element['urls'] = fetched_imgs['urls'][:3]
+        image_element['prompt'] = image_prompt.split('|')[0]
+
+
+
+
+        # handle title element
+        #title_element = elements_list[1]
+
+        text_info = gen_text_json(current_commands, n_returns=1)
+        # text_info {title, sub_title, main_body, item1,item2,item3, decoration_text, time, address}
+        # text_info {title, }
+
+
+
+        subtitle_element = elements_list[2]
+
+
+        address_element = elements_list[3]
+
+
+        time_element = elements_list[4] 
+
+        bodytext_element = elements_list[2]
+
+        
+
+        
+
+
+
+
+
+
+
+
+    
+
+
+
 
 
 if __name__ == '__main__':
@@ -325,9 +405,11 @@ if __name__ == '__main__':
     # msg = "Whatsmore cake party at 500 Lawrence Expy, Sunnyvale, CA 94085 this Saturday at 11:00 pm"
     # json_file = gen_text_json(msg)
 
-    msg = 'nature'
-    results = gen_img_pexels(msg, 3, size='medium')
-    # results = gen_img_unsplash(msg, 3, width=256, height=256)
+    msg = 'coffee workshop'
+    # results = gen_img_pexels(msg, 3, size='small')
+    # results = gen_img_unsplash(msg, 3, width=512, height=512)
+
+    results = genTextImage(msg, 3, True)
     pdb.set_trace()
     print("Test over!!")
 
