@@ -409,7 +409,7 @@ if __name__ == '__main__':
     # results = gen_img_pexels(msg, 3, size='small')
     # results = gen_img_unsplash(msg, 3, width=512, height=512)
 
-    results = genTextImage(msg, 3, True)
+    results = genTextImage(msg, number_templates=3, debug=True)
     pdb.set_trace()
     print("Test over!!")
 

@@ -1,0 +1,107 @@
+{
+  "dimensions": {
+    "width": 100,
+    "height": 150
+  },
+  "backgroundColor": "#FFFFFF",
+  "elements": [
+    {
+      "type": "image",
+      "editType": "select_image",
+      "filename": "image1.jpg",
+      "urls": [
+        "https://ci.xiaohongshu.com/2949431a-2f18-d5ea-728e-a6b572d7aa2b?imageView2/2/w/1080/format/jpg",
+        "https://ci.xiaohongshu.com/235748c8-68dd-ab40-0fd0-043ae5d6c5ad?imageView2/2/w/1080/format/jpg",
+        "https://ci.xiaohongshu.com/fd1f590a-5fe1-cf9e-0a71-f7d4726143be?imageView2/2/w/1080/format/jpg"
+      ],
+      "prompt": "Enter a description for the image",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "width": 100,
+        "height": 150
+      },
+      "elementRole": "background"
+    },
+    {
+      "type": "text",
+      "editType": "select_text",
+      "prefix": "Title",
+      "text": [
+        "option1 text contents",
+        "option2 text contents",
+        "option3 text contents"
+      ],
+      "prompt": "Enter a headline for the poster, eg, cake store",
+      "font": "Helvetica",
+      "fontSize": 10,
+      "color": "#000000",
+      "position": {
+        "x": 20,
+        "y": 20,
+        "width": 100,
+        "height": 20
+      },
+      "elementRole": "title",
+      "max_len": -1
+    },
+    {
+      "type": "text",
+      "editType": "select_text",
+      "prefix": "Subtitle",
+      "text": [
+        "option1 text contents",
+        "option2 text contents",
+        "option3 text contents"
+      ],
+      "prompt": "Enter a tagline for the poster",
+      "font": "Helvetica",
+      "fontSize": 8,
+      "color": "#666666",
+      "position": {
+        "x": 20,
+        "y": 40,
+        "width": 100,
+        "height": 20
+      },
+      "elementRole": "sub_title",
+      "max_len": -1
+    },
+    {
+      "type": "text",
+      "editType": "input",
+      "prefix": "Address",
+      "prompt": "Enter a tagline for the poster",
+      "text": "address1",
+      "font": "Helvetica",
+      "fontSize": 8,
+      "color": "#666666",
+      "position": {
+        "x": 20,
+        "y": 60,
+        "width": 100,
+        "height": 20
+      },
+      "elementRole": "address",
+      "max_len": -1
+    },
+    {
+      "type": "text",
+      "editType": "input",
+      "prefix": "Time",
+      "prompt": "Enter a tagline for the poster",
+      "text": "time1",
+      "font": "Helvetica",
+      "fontSize": 8,
+      "color": "#666666",
+      "position": {
+        "x": 20,
+        "y": 80,
+        "width": 100,
+        "height": 20
+      },
+      "elementRole": "time",
+      "max_len": -1
+    }
+  ]
+}
